@@ -24,7 +24,7 @@ rssFeed<-function(sourceUrl,keepHtml=FALSE){
   titles<-sapply(getNodeSet(rootNode,"/rss/channel/item/title"),xmlValue)
   descriptions<-sapply(getNodeSet(rootNode,"/rss/channel/item/description"),xmlValue)
   if (keepHtml==FALSE)
-    descriptions<-gsub("<.*?>", "", descriptions)
+    descriptions<-gsub("<.*?>", " ", descriptions)
   
   pubDates<-sapply(getNodeSet(rootNode,"/rss/channel/item/pubDate"),xmlValue)
   links<-sapply(getNodeSet(rootNode,"/rss/channel/item/link"),xmlValue)  
