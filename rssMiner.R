@@ -1,8 +1,10 @@
 library("XML")
 library("RCurl")
+library("boilerpipeR")
 library("tm")
 library("SnowballC")
 library("wordcloud")
+
 
 quickWordCloud<-function(corpus){
   wordcloud(corpus, scale=c(5,0.5), max.words=100, random.order=FALSE, rot.per=0.35, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
