@@ -1,13 +1,25 @@
 library("XML")
 library("RCurl")
-library("boilerpipeR")
 library("tm")
 library("SnowballC")
 library("wordcloud")
+library("boilerpipeR")
+r
 
+rssSummary<-function(url,stopwordsToIgnore=stopwords("english"),maxwords=100){
+  rssXml<-getURL(url)
 
-quickWordCloud<-function(corpus){
-  wordcloud(corpus, scale=c(5,0.5), max.words=100, random.order=FALSE, rot.per=0.35, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
+  blogs<-getTextFromHtmlPages(rss$links)
+  corpus<-cleanUpCorpus(blogs,stopwordsToIgnore)
+  quickWordCloud(corpus,maxwords)
+  tdm<-TermDocumentMatrix(corpus)
+  df<-termMatrixAsSortedDataframe()
+  df[1:maxwords,]
+  return(tdm)
+}
+
+quickWordCloud<-function(corpus, maxwords=100){
+  wordcloud(corpus, scale=c(5,0.5), max.words=maxwords, random.order=FALSE, rot.per=0.35, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
 }
 
 
@@ -21,6 +33,8 @@ quickWordCloud<-function(corpus){
 
 rssFeed<-function(sourceUrl,keepHtml=FALSE){
   rssXml=getURL(sourceUrl)
+  rssXml<-gsub("\r\n"," ",rssXml)
+  rssXml<-gsub("\n"," ",rssXml)
   feed=xmlTreeParse(rssXml)
   rootNode<-xmlRoot(feed)
   titles<-sapply(getNodeSet(rootNode,"/rss/channel/item/title"),xmlValue)
@@ -46,7 +60,7 @@ cleanUpCorpus<-function(vector, stopwordsToRemove=stopwords("english") ){
   myCorpus <- tm_map(myCorpus, stripWhitespace)
   myCorpus <- tm_map(myCorpus, content_transformer(tolower))
   myCorpus <- tm_map(myCorpus, removeWords, stopwordsToRemove)
-  myCorpus <- tm_map(myCorpus, stemDocument)
+  # myCorpus <- tm_map(myCorpus, stemDocument)
  return(myCorpus)
 }
 
